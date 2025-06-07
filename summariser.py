@@ -6,7 +6,7 @@ import requests
 class TextSummarizer:
     def __init__(self):
         print("Loading model and tokenizer...")
-        self.api.url = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
+        self.api_url = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
         token = os.getenv('token1', 'your_token_here')  
         self.headers = {
             "Authorization": f"Bearer {token}"
