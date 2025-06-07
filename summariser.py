@@ -13,10 +13,14 @@ class TextSummarizer:
         }
 
     def summarize(self, text,mode = 'medium'):
+        MAX_CHARS = 3500  # Safe limit for ~1024 tokens
+        text = text.strip()
+        if len(text) > MAX_CHARS:
+            text = text[:MAX_CHARS]
         if not text.strip():
             return "Input text is empty. Please provide some content."
-        print("Text received:", text[:100])  # Print part of the input
-        print("Mode:", mode)
+        # print("Text received:", text[:100])  # Print part of the input
+        # print("Mode:", mode)
         
         #set mode
         mode = mode.lower()
@@ -35,7 +39,7 @@ class TextSummarizer:
                 "do_sample": False
             }
         }
-        print("Sending request to HuggingFace API...")
+        # print("Sending request to HuggingFace API...")
         response = requests.post(self.api_url,headers = self.headers,json = payload)
         print("Response status code:", response.status_code)
         print("Response text:", response.text)
