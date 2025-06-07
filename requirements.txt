@@ -5,4 +5,3 @@ PyPDF2==3.0.1
 torch==2.6.0
 transformers==4.51.2
 uvicorn
-os
