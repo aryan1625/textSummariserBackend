@@ -15,6 +15,8 @@ class TextSummarizer:
     def summarize(self, text,mode = 'medium'):
         if not text.strip():
             return "Input text is empty. Please provide some content."
+        print("Text received:", text[:100])  # Print part of the input
+        print("Mode:", mode)
         
         #set mode
         mode = mode.lower()
@@ -33,8 +35,11 @@ class TextSummarizer:
                 "do_sample": False
             }
         }
-
+        print("Sending request to HuggingFace API...")
         response = requests.post(self.api.url,headers = self.headers,json = payload)
+        print("Response status code:", response.status_code)
+        print("Response text:", response.text)
+
         if response.status_code == 200:
             try:
                 return response.json()[0]["summary_text"]
