@@ -36,7 +36,7 @@ class TextSummarizer:
             }
         }
         print("Sending request to HuggingFace API...")
-        response = requests.post(self.api.url,headers = self.headers,json = payload)
+        response = requests.post(self.api_url,headers = self.headers,json = payload)
         print("Response status code:", response.status_code)
         print("Response text:", response.text)
 
