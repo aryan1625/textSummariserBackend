@@ -1,18 +1,16 @@
 
-from transformers import BartTokenizer, BartForConditionalGeneration
-import torch
+# from transformers import BartTokenizer, BartForConditionalGeneration
+# import torch
 import os
+import requests
 class TextSummarizer:
-    def __init__(self, model_name='facebook/bart-large-cnn'):
+    def __init__(self):
         print("Loading model and tokenizer...")
         self.api.url = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
         token = os.getenv('token1', 'your_token_here')  
         self.headers = {
             "Authorization": f"Bearer {token}"
         }
-        self.tokenizer = BartTokenizer.from_pretrained(model_name)
-        self.model = BartForConditionalGeneration.from_pretrained(model_name)
-        print("Model loaded successfully.")
 
     def summarize(self, text,mode = 'medium'):
         if not text.strip():
@@ -27,19 +25,24 @@ class TextSummarizer:
         else:
             max_length,min_length = 400,200
 
+        payload = {
+            "inputs": text,
+            "parameters": {
+                "max_length":max_length,
+                "min_length": min_length,
+                "do_sample": False
+            }
+        }
 
-        # Tokenize the text input
-        inputs = self.tokenizer.encode(text, return_tensors='pt', max_length=1024, truncation=True)
+        response = requests.post(self.api.url,headers = self.headers,json = payload)
+        if response.status_code == 200:
+            try:
+                return response.json()[0]["summary_text"]
+            except (KeyError, IndexError):
+                return "Failed to extract summary from response."
+        elif response.status_code == 503:
+            return "Model is loading on HuggingFace. Please try again after a few seconds."
+        else:
+            return f"API Error: {response.status_code} - {response.text}"
 
-        # Generate summary (you can play with parameters)
-        summary_ids = self.model.generate(
-            inputs,
-            max_length=max_length,
-            min_length=min_length,
-            length_penalty=2.0,
-            num_beams=4,
-            early_stopping=True,
-        )
-
-        # Decode and return the summary
-        return self.tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+        
