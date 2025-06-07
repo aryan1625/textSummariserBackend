@@ -1,9 +1,15 @@
+
 from transformers import BartTokenizer, BartForConditionalGeneration
 import torch
-
+import os
 class TextSummarizer:
     def __init__(self, model_name='facebook/bart-large-cnn'):
         print("Loading model and tokenizer...")
+        self.api.url = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
+        token = os.getenv('token1', 'your_token_here')  
+        self.headers = {
+            "Authorization": f"Bearer {token}"
+        }
         self.tokenizer = BartTokenizer.from_pretrained(model_name)
         self.model = BartForConditionalGeneration.from_pretrained(model_name)
         print("Model loaded successfully.")
